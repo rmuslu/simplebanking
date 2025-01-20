@@ -19,20 +19,26 @@ public class AccountService {
     }
 
     public Account getAccount(String accountNumber) {
-        Optional<Account> optionalAccount = accountRepository.findById(accountNumber);
-        if (!optionalAccount.isPresent()) {
-            throw new IllegalArgumentException("Account not found");
+        try {
+            return accountRepository.findById(accountNumber)
+                    .orElseThrow(() -> new IllegalArgumentException("Account not found with account number: " + accountNumber));
+        } catch (IllegalArgumentException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new RuntimeException("Unexpected error while fetching account", ex);
         }
-        return optionalAccount.get();
     }
-
-
 
 
     public Account createAccount(Account account) {
         if (accountRepository.existsById(account.getAccountNumber())) {
             throw new IllegalArgumentException("Account already exists with account number: " + account.getAccountNumber());
         }
-        return accountRepository.save(account);
+        try {
+            return accountRepository.save(account);
+        } catch (Exception ex) {
+            throw new RuntimeException("Error while creating account", ex);
+        }
+
     }
 }

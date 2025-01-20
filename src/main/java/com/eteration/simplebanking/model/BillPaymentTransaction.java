@@ -2,6 +2,7 @@ package com.eteration.simplebanking.model;
 
 
 import com.eteration.simplebanking.common.BillTypes;
+import com.eteration.simplebanking.model.exception.InsufficientBalanceException;
 
 import javax.persistence.*;
 
@@ -27,11 +28,12 @@ public class BillPaymentTransaction extends Transaction {
     }
 
     @Override
-    public void apply(Account account) {
+    public TransactionStatus apply(Account account) {
         if (account.getBalance() < this.getAmount()) {
-            throw new IllegalArgumentException("Insufficient balance for bill payment.");
+            throw new InsufficientBalanceException("Insufficient balance for bill payment.");
         }
         account.setBalance(account.getBalance() - this.getAmount());
+        return null;
     }
 
     public BillTypes getBillType() {

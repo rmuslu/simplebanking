@@ -1,6 +1,7 @@
 package com.eteration.simplebanking.controller;
 
 
+import com.eteration.simplebanking.controller.interfaces.TransactionControllerOperations;
 import com.eteration.simplebanking.dto.TransactionDTO;
 import com.eteration.simplebanking.model.TransactionStatus;
 import com.eteration.simplebanking.services.TransactionService;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/account/v1")
-public class TransactionController {
+public class TransactionController implements TransactionControllerOperations {
     private TransactionService transactionService;
 
     public TransactionController(TransactionService transactionService) {
@@ -35,12 +36,11 @@ public class TransactionController {
         return ResponseEntity.ok(transaction);
     }
     @PostMapping("/bill-payment/{accountNumber}")
-    ResponseEntity<TransactionStatus> billPayment(
+    public ResponseEntity<TransactionStatus> billPayment(
             @PathVariable String accountNumber,
             @RequestBody TransactionDTO transactionDTO) {
         transactionService.billPayment(accountNumber, transactionDTO.getAmount(),
                 transactionDTO.getBillType(), transactionDTO.getReference());
         return ResponseEntity.ok(new TransactionStatus("OK"));
     }
-
 }

@@ -1,24 +1,23 @@
 package com.eteration.simplebanking.controller;
 
+import com.eteration.simplebanking.controller.interfaces.AccountControllerOperations;
 import com.eteration.simplebanking.dto.AccountDTO;
-import com.eteration.simplebanking.dto.TransactionDTO;
-import com.eteration.simplebanking.mapper.AccountMapper;
+import com.eteration.simplebanking.mapper.Mapper;
 import com.eteration.simplebanking.model.Account;
-import com.eteration.simplebanking.model.Transaction;
 import com.eteration.simplebanking.services.AccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/account/v1")
-public class AccountController {
+public class AccountController implements AccountControllerOperations {
 
     private final AccountService accountService;
-    private final AccountMapper accountMapper;
+    private final Mapper mapper;
 
-    public AccountController(AccountService accountService, AccountMapper accountMapper) {
+    public AccountController(AccountService accountService, Mapper mapper) {
         this.accountService = accountService;
-        this.accountMapper = accountMapper;
+        this.mapper = mapper;
     }
 
     /**
@@ -27,12 +26,13 @@ public class AccountController {
      */
     @GetMapping("/{accountNumber}")
     public ResponseEntity<AccountDTO> getAccountDetails(@PathVariable String accountNumber) {
-        AccountDTO accountDTO = accountMapper.toDTO(accountService.getAccount(accountNumber));
+        AccountDTO accountDTO = mapper.toDTO(accountService.getAccount(accountNumber));
         return ResponseEntity.ok(accountDTO);
     }
+
     @PostMapping("/create")
-    public ResponseEntity<Account> createAccount(@RequestBody Account account) {
-        Account createdAccount = accountService.createAccount(account);
+    public ResponseEntity<AccountDTO> createAccount(@RequestBody Account account) {
+        AccountDTO createdAccount = mapper.toDTO(accountService.createAccount(account));
         return ResponseEntity.ok(createdAccount);
     }
 

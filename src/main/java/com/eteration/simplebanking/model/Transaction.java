@@ -1,5 +1,6 @@
 package com.eteration.simplebanking.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,19 +23,22 @@ public abstract class Transaction {
     private Long id;
 
     @Column(name = "amount", nullable = false)
-    private double amount;
+    protected double amount;
 
     @Column(name = "transaction_date", nullable = false)
     private LocalDateTime date;
 
     @ManyToOne
     @JoinColumn(name = "account_number", referencedColumnName = "account_number", nullable = false)
+    @JsonBackReference
     private Account account;
 
+    @Embedded
+    protected TransactionStatus status;
     public Transaction(double amount) {
         this.amount = amount;
         this.date = LocalDateTime.now();
     }
 
-    public abstract void apply(Account account);
+    public abstract TransactionStatus apply(Account account);
 }

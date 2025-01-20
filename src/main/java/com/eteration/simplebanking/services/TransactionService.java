@@ -31,28 +31,50 @@ public class TransactionService {
     }
 
     public Transaction credit(String accountNumber, double amount) {
-        Account account = accountService.getAccount(accountNumber);
-        DepositTransaction transaction = new DepositTransaction(amount);
-        transaction.setAccount(account);
-        account.post(transaction);
-        accountRepository.save(account);
-        return transaction;
+        try {
+            Account account = accountRepository.findById(accountNumber)
+                    .orElseThrow(() -> new IllegalArgumentException("Account not found with account number: " + accountNumber));
+            DepositTransaction transaction = new DepositTransaction(amount);
+            transaction.setAccount(account);
+            account.post(transaction);
+            accountRepository.save(account);
+            return transaction;
+        } catch (IllegalArgumentException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new RuntimeException("Unexpected error while processing credit transaction", ex);
+        }
     }
+
     public Transaction debit(String accountNumber, double amount) {
-        Account account = accountService.getAccount(accountNumber);
+        try {
+            Account account = accountRepository.findById(accountNumber)
+                    .orElseThrow(() -> new IllegalArgumentException("Account not found with account number: " + accountNumber));
         WithdrawalTransaction transaction = new WithdrawalTransaction(amount);
         transaction.setAccount(account);
         account.post(transaction);
         accountRepository.save(account);
         return transaction;
+        } catch (IllegalArgumentException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new RuntimeException("Unexpected error while processing credit transaction", ex);
+        }
     }
 
     public Transaction billPayment(String accountNumber, double amount, BillTypes billType, String reference) {
-        Account account = accountService.getAccount(accountNumber);
+        try {
+            Account account = accountRepository.findById(accountNumber)
+                    .orElseThrow(() -> new IllegalArgumentException("Account not found with account number: " + accountNumber));
         BillPaymentTransaction transaction = new BillPaymentTransaction(amount, billType, reference);
         transaction.setAccount(account);
         account.post(transaction);
         accountRepository.save(account);
         return transaction;
+        } catch (IllegalArgumentException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new RuntimeException("Unexpected error while processing credit transaction", ex);
+        }
     }
 }

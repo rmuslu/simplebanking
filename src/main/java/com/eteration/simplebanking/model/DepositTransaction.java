@@ -16,8 +16,11 @@ public class DepositTransaction extends Transaction {
     }
 
     @Override
-    public void apply(Account account) {
-        account.setBalance(account.getBalance() + getAmount());
+    public TransactionStatus apply(Account account) {
+        this.setAccount(account);
+        account.credit(amount);
+        status = new TransactionStatus("OK");
+        return status;
     }
 }
 

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class AccountMapper {
+public class Mapper {
 
     public AccountDTO toDTO(Account account) {
         AccountDTO dto = new AccountDTO(account);

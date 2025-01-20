@@ -17,10 +17,15 @@ public class WithdrawalTransaction extends Transaction {
     }
 
     @Override
-    public void apply(Account account) {
-        if (account.getBalance() < getAmount()) {
-            throw new InsufficientBalanceException("Insufficient balance for withdrawal");
+    public TransactionStatus apply(Account account) {
+        try {
+            this.setAccount(account);
+            account.debit(amount);
+        } catch (InsufficientBalanceException e) {
+            status = new TransactionStatus("FAIL");
+            return status;
         }
-        account.setBalance(account.getBalance() - getAmount());
+        status = new TransactionStatus("OK");
+        return status;
     }
 }

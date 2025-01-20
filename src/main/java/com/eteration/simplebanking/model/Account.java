@@ -1,5 +1,6 @@
 package com.eteration.simplebanking.model;
 
+import com.eteration.simplebanking.model.exception.InsufficientBalanceException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,5 +38,14 @@ public class Account {
         transaction.apply(this);
         this.transactions.add(transaction);
     }
+    public void credit(double amount) {
+        balance += amount;
+    }
 
+    public void debit(double amount) throws InsufficientBalanceException {
+        if (balance < amount) {
+            throw new InsufficientBalanceException("There is not sufficient balance in the account");
+        }
+        balance -= amount;
+    }
 }
