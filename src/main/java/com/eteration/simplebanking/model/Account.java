@@ -1,7 +1,41 @@
 package com.eteration.simplebanking.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-// This class is a place holder you can change the complete implementation
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "account")
 public class Account {
+    @Id
+    @Column(name = "account_number")
+    private String accountNumber;
+
+    @Column(name = "owner")
+    private String owner;
+
+    @Column(name = "balance")
+    private double balance;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
+
+    public Account(String owner, String accountNumber) {
+        this.owner = owner;
+        this.accountNumber = accountNumber;
+        this.balance = 0.0;
+    }
+
+    public void post(Transaction transaction) {
+        transaction.apply(this);
+        this.transactions.add(transaction);
+    }
+
 }
